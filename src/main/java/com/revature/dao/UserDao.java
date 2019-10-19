@@ -30,11 +30,15 @@ public class UserDao {
 		}
 	}
 	
-	// When constructor implemented creates connection with databse.
+	// When constructor implemented creates connection with database.
 	public UserDao() {
 		this.conn = ConnectionUtil.getConnection();
 	}
 	
+	// createUser, getNewUser, extractUser used in sequence to generate
+	// a new user row on the 'personal_accounts' table, let the database
+	// generate the default/serial values (id, start_date, privileged)
+	// and then return that information as the current user. 
 	public User createUser(String fullName, String password) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
 			User user = new User();
@@ -46,7 +50,7 @@ public class UserDao {
 			int updateResult = statement.executeUpdate();
 			
 			if (updateResult == 1) {
-				user = getNewUser(connection, fullName, password);
+				user = getUser(connection, fullName, password);
 			}
 			
 			return user;
@@ -57,7 +61,7 @@ public class UserDao {
 		}
 	}
 	
-	private User getNewUser(Connection connection, String fullName, String password) throws SQLException {
+	private User getUser(Connection connection, String fullName, String password) throws SQLException {
 		String sql = "SELECT * FROM personal_accounts WHERE (LOWER(full_name) = LOWER(?)) AND password = ?";
 		PreparedStatement statement = connection.prepareStatement(sql);
 			statement.setString(1, fullName);
@@ -83,5 +87,29 @@ public class UserDao {
 		User user = new User(id, fullName, password, startDate, privileged);
 		return user;
 	}
+
+	//
+	public User authenticateUser( int id, String password) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "SELECT * FROM personal_accounts WHERE id = ? AND password = ?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, id);
+				statement.setString(2, password);
+				
+			ResultSet resultSet = statement.executeQuery();
+			User user = new User();
+			
+			if (resultSet.next()) {
+				user = extractUser(resultSet);
+			}
+			
+			return user;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}		
+	}
+	
+	
 	
 }

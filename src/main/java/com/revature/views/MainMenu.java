@@ -7,8 +7,11 @@ import com.revature.util.ScannerUtil;
 public class MainMenu implements View{
 	
 	private UserDao userDao = new UserDao();
+	private User user = new User();
 
 	public void printMenu() {
+		System.out.println("---------- WELCOME TO GOSBANK ----------");
+
 		System.out.println("1. Create Personal Account");
 		System.out.println("2. Log-in to Personal Account");
 		System.out.println("3. Other");
@@ -26,10 +29,10 @@ public class MainMenu implements View{
 				return null;
 			case 1: 
 				createUser(); 
-				return new UserMenu();
+				return new UserMenu(user);
 			case 2: 
 				authenticateUser(); 
-				return new UserMenu();
+				return new UserMenu(user);
 			case 3: 
 				return null;
 			default: 
@@ -46,7 +49,7 @@ public class MainMenu implements View{
 		System.out.println("Please enter your password: ");
 		String passInput = ScannerUtil.getStringInput();
 		
-		User user = userDao.createUser(nameInput, passInput);
+		this.user = userDao.createUser(nameInput, passInput);
 		
 		System.out.printf("User ID: %d, User Name: %s, User Password: %s %n", user.getId(), user.getFullName(), user.getPassword());
 	}
@@ -54,12 +57,13 @@ public class MainMenu implements View{
 	private void authenticateUser() {
 		// Requests/gets Personal Account ID from User
 		System.out.println("Please enter your User Account ID: ");
-		int pAccountID = new ScannerUtil().getIntInput();
+		int accountIdInput = ScannerUtil.getIntInput();
 		
 		// Requests/gets Personal Account Password from User
 		System.out.println("Please enter your User Account Password: ");
 		String passInput = ScannerUtil.getStringInput();
 		
+		this.user = userDao.authenticateUser(accountIdInput, passInput);			
 	}
 	
 }

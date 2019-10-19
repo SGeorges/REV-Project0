@@ -33,7 +33,7 @@ public class ScannerUtil {
 	}
 	
 	public static int getIntInput() {
-		int input = 0;
+		int input = -1;
 		
 		while (input < 0) {
 			if (!scanner.hasNextInt()) {
@@ -43,6 +43,7 @@ public class ScannerUtil {
 			input = scanner.nextInt();
 		}
 		
+		scanner.nextLine();
 		return input;
 	}
 	
