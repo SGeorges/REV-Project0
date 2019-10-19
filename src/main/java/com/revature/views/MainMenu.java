@@ -1,9 +1,12 @@
 package com.revature.views;
 
+import com.revature.dao.UserDao;
 import com.revature.models.User;
 import com.revature.util.ScannerUtil;
 
 public class MainMenu implements View{
+	
+	private UserDao userDao = new UserDao();
 
 	public void printMenu() {
 		System.out.println("1. Create Personal Account");
@@ -43,9 +46,9 @@ public class MainMenu implements View{
 		System.out.println("Please enter your password: ");
 		String passInput = ScannerUtil.getStringInput();
 		
-		User user = new User(nameInput,passInput);
+		User user = userDao.createUser(nameInput, passInput);
 		
-		System.out.printf("User Name: %s, User Password: %s %n", user.getFullName(), user.getPassword());
+		System.out.printf("User ID: %d, User Name: %s, User Password: %s %n", user.getId(), user.getFullName(), user.getPassword());
 	}
 	
 	private void authenticateUser() {

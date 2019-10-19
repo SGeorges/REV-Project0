@@ -96,13 +96,22 @@ public class User {
 		return true;
 	}
 
-	// 		----------  CONSTRUCTOR (FULL_NAME, PASSWORD)  ----------		
+	// 		----------  CONSTRUCTORS  ----------		
 	public User(String fullName, String password) {
 		super();
 		this.fullName = fullName;
 		this.password = password;
 	}
 	
+	public User(int id, String fullName, String password, LocalDate startDate, boolean privileged) {
+		super();
+		this.id = id;
+		this.fullName = fullName;
+		this.password = password;
+		this.startDate = startDate;
+		this.privileged = privileged;
+	}
+
 	public User() {
 		super();
 		// TODO Auto-generated constructor stub
