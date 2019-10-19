@@ -19,28 +19,44 @@ public class MainMenu implements View{
 		int user_input = ScannerUtil.getInput(3);
 		
 		switch(user_input) {
-			case 0: return null;
-			case 1: createUser(); return new UserMenu();
-			case 2: return null;
-			case 3: return null;
-			default: return null;
+			case 0: 
+				return null;
+			case 1: 
+				createUser(); 
+				return new UserMenu();
+			case 2: 
+				authenticateUser(); 
+				return new UserMenu();
+			case 3: 
+				return null;
+			default: 
+				return null;
 		}
 	}
-	
+
 	public void createUser() {
 		// Requests/gets Full name of the User 
-		System.out.print("Please enter your name (Full Name): ");
-		String name_input = ScannerUtil.getStringInput();
-		
-		System.out.println();
+		System.out.println("Please enter your name (Full Name): ");
+		String nameInput = ScannerUtil.getStringInput();
 		
 		// Requests/gets password of the User
-		System.out.print("Please enter your password: ");
-		String pass_input = ScannerUtil.getStringInput();
+		System.out.println("Please enter your password: ");
+		String passInput = ScannerUtil.getStringInput();
 		
-		System.out.println();
+		User user = new User(nameInput,passInput);
 		
-		User user = new User(name_input,pass_input);
+		System.out.printf("User Name: %s, User Password: %s %n", user.getFullName(), user.getPassword());
+	}
+	
+	private void authenticateUser() {
+		// Requests/gets Personal Account ID from User
+		System.out.println("Please enter your User Account ID: ");
+		int pAccountID = new ScannerUtil().getIntInput();
+		
+		// Requests/gets Personal Account Password from User
+		System.out.println("Please enter your User Account Password: ");
+		String passInput = ScannerUtil.getStringInput();
+		
 	}
 	
 }

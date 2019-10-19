@@ -32,6 +32,20 @@ public class ScannerUtil {
 		return input;
 	}
 	
+	public static int getIntInput() {
+		int input = 0;
+		
+		while (input < 0) {
+			if (!scanner.hasNextInt()) {
+				scanner.nextLine();
+				continue;
+			}
+			input = scanner.nextInt();
+		}
+		
+		return input;
+	}
+	
 	public static double getInput(double max) {
 		double input = -1;
 		
