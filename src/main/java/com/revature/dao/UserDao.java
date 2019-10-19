@@ -1,14 +1,15 @@
 package com.revature.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.revature.models.Account;
 import com.revature.models.User;
 import com.revature.util.ConnectionUtil;
 
@@ -87,8 +88,23 @@ public class UserDao {
 		User user = new User(id, fullName, password, startDate, privileged);
 		return user;
 	}
+	
+	private Account extractAccount(ResultSet resultSet) throws SQLException {
+		int accountId = resultSet.getInt("account_id");
+		
+		String amountString = resultSet.getString("amount");
+			amountString = amountString.substring(1).replace(",", "");
+		BigDecimal amount = new BigDecimal(amountString);
+		
+		String accountType = resultSet.getString("account_type");
+		boolean primaryAccount = resultSet.getBoolean("primary_account");
+		
+		Account account = new Account(accountId, amount, accountType, primaryAccount);
+		return account;
+	}
 
-	//
+	// Takes user input for id and password then pulls information from Personal_account into the resultSet
+	// ResultSet then pushed to extractUser to populate a user model to be returned. 
 	public User authenticateUser( int id, String password) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
 			String sql = "SELECT * FROM personal_accounts WHERE id = ? AND password = ?";
@@ -110,6 +126,28 @@ public class UserDao {
 		}		
 	}
 	
+	
+	public List<Account> getBankAccounts(int id) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "select account_id, accounts.amount, accounts.account_type, primary_account from account_access " + 
+					     "left join accounts on account_access.account_id = accounts.id where personal_account_id = ?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, id);
+				
+			ResultSet resultSet = statement.executeQuery();
+			List<Account> accounts = new ArrayList<>();
+			
+			while (resultSet.next()) {
+				Account account = extractAccount(resultSet);
+				accounts.add(account);
+			}
+			
+			return accounts;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	
 }
