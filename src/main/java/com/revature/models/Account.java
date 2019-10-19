@@ -102,10 +102,9 @@ public class Account {
 		this.accountType = accountType;
 		this.primaryAccount = primaryAccount;
 	}
-	
-	
-	
-	
-	
-	
+
+	public Account() {
+		super();
+		// TODO Auto-generated constructor stub
+	}	
 }

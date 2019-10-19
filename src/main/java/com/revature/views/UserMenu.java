@@ -3,6 +3,7 @@ package com.revature.views;
 import java.util.List;
 
 import com.revature.dao.UserDao;
+import com.revature.models.Account;
 import com.revature.models.User;
 import com.revature.util.ScannerUtil;
 
@@ -10,7 +11,7 @@ public class UserMenu implements View{
 	
 	private UserDao userDao = new UserDao();
 	private User user = new User();
-	//private List<Account> accounts = new List<>();
+	private Account account = new Account();
 	
 	// Constructor to pass on the current user information to the 
 	// UserMenu.
@@ -48,6 +49,8 @@ public class UserMenu implements View{
 			printAccDetails();
 			return new UserMenu(user);
 		case 2: 
+			viewBankAccounts();
+			System.out.println(account.toString());
 			return null;
 		case 3: 
 			return null;
@@ -59,7 +62,20 @@ public class UserMenu implements View{
 	}
 	
 	private void viewBankAccounts() {
+		List<Account> accounts = userDao.getBankAccounts(user.getId());
 		
+		System.out.println("-----------------------------------------------");
+		System.out.println("| Account ID | Account Type | Primary Account |");
+		for (Account account : accounts) {
+			System.out.printf("| %10d | %-12s | %-15B |%n", 
+							  account.getId(), account.getAccountType(), account.isPrimaryAccount());
+		}
+		System.out.println("-----------------------------------------------");
+		System.out.println("Select which account you'd like to access.");
+		
+		int accSelect = ScannerUtil.getInput(accounts.size());
+		
+		this.account = accounts.get(accSelect);
 	}
 
 }
