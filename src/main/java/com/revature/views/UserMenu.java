@@ -20,6 +20,7 @@ public class UserMenu implements View{
 	}
 
 	public void printMenu() {
+		System.out.println();
 		System.out.println("---------- Personal Account Menu ----------");
 		System.out.println("1. View Account Details");
 		System.out.println("2. View Banking Accounts");
@@ -29,6 +30,7 @@ public class UserMenu implements View{
 	}
 	
 	public void printAccDetails() {
+		System.out.println();
 		System.out.println("---------- Personal Account Details ----------");
 		System.out.println("Account ID        : " + user.getId());
 		System.out.println("Account Full Name : " + user.getFullName());
@@ -76,7 +78,7 @@ public class UserMenu implements View{
 		
 		int accSelect = ScannerUtil.getInput((accounts.size() - 1));
 		
-		this.account = accounts.get((accSelect + 1));
+		this.account = accounts.get((accSelect));
 	}
 
 }

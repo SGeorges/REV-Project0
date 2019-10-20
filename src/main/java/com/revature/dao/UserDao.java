@@ -149,5 +149,19 @@ public class UserDao {
 		}
 	}
 	
+	public boolean makeTransfer(int idIn, int idOut, BigDecimal amount) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "select transfer_wealth( ?::Money, ?, ?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setBigDecimal(1, amount);
+				statement.setInt(2, idIn);
+				statement.setInt(3, idOut);
+				
+			return statement.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 }

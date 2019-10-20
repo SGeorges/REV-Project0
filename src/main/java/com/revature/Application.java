@@ -7,7 +7,7 @@ public class Application {
 		
 	public static void main(String[] args) {
 		View currentView = new MainMenu();
-		System.out.println(System.getenv("GOSBANK_URL") + " : " + System.getenv("BM_ROLE"));
+//		System.out.println(System.getenv("GOSBANK_URL") + " : " + System.getenv("BM_ROLE"));
 		
 		while (currentView != null) {
 			currentView = currentView.run();
