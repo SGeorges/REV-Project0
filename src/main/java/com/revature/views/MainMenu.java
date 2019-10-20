@@ -2,12 +2,13 @@ package com.revature.views;
 
 import com.revature.dao.UserDao;
 import com.revature.models.User;
+import com.revature.services.BankService;
 import com.revature.util.ScannerUtil;
 
 public class MainMenu implements View{
 	
 	private UserDao userDao = new UserDao();
-	private User user = new User();
+	private BankService bs = new BankService();
 
 	public void printMenu() {
 		System.out.println("---------- WELCOME TO GOSBANK ----------");
@@ -28,42 +29,13 @@ public class MainMenu implements View{
 			case 0: 
 				return null;
 			case 1: 
-				createUser(); 
-				return new UserMenu(user);
+				return new UserMenu(bs.createUser());
 			case 2: 
-				authenticateUser(); 
-				return new UserMenu(user);
+				return new UserMenu(bs.authenticateUser());
 			case 3: 
 				return null;
 			default: 
 				return null;
 		}
 	}
-
-	public void createUser() {
-		// Requests/gets Full name of the User 
-		System.out.println("Please enter your name (Full Name): ");
-		String nameInput = ScannerUtil.getStringInput();
-		
-		// Requests/gets password of the User
-		System.out.println("Please enter your password: ");
-		String passInput = ScannerUtil.getStringInput();
-		
-		this.user = userDao.createUser(nameInput, passInput);
-		
-		System.out.printf("User ID: %d, User Name: %s, User Password: %s %n", user.getId(), user.getFullName(), user.getPassword());
-	}
-	
-	private void authenticateUser() {
-		// Requests/gets Personal Account ID from User
-		System.out.println("Please enter your User Account ID: ");
-		int accountIdInput = ScannerUtil.getIntInput();
-		
-		// Requests/gets Personal Account Password from User
-		System.out.println("Please enter your User Account Password: ");
-		String passInput = ScannerUtil.getStringInput();
-		
-		this.user = userDao.authenticateUser(accountIdInput, passInput);			
-	}
-	
 }

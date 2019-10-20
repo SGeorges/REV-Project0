@@ -47,15 +47,16 @@ public class UserMenu implements View{
 			return new MainMenu();
 		case 1: 
 			printAccDetails();
-			return new UserMenu(user);
+			return new UserMenu(this.user);
 		case 2: 
 			viewBankAccounts();
-			System.out.println(account.toString());
-			return null;
+			return new AccountMenu(this.user, this.account);
 		case 3: 
-			return null;
+			// Do something method()
+			return new UserMenu(this.user);
 		case 4: 
-			return null;
+			// Do something method()
+			return new UserMenu(this.user);
 		default: 
 			return null;
 		}	
@@ -73,9 +74,9 @@ public class UserMenu implements View{
 		System.out.println("-----------------------------------------------");
 		System.out.println("Select which account you'd like to access.");
 		
-		int accSelect = ScannerUtil.getInput(accounts.size());
+		int accSelect = ScannerUtil.getInput((accounts.size() - 1));
 		
-		this.account = accounts.get(accSelect);
+		this.account = accounts.get((accSelect + 1));
 	}
 
 }
