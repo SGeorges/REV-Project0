@@ -129,8 +129,8 @@ public class UserDao {
 	
 	public List<Account> getBankAccounts(int id) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
-			String sql = "select account_id, accounts.amount, accounts.account_type, primary_account from account_access " + 
-					     "left join accounts on account_access.account_id = accounts.id where personal_account_id = ?";
+			String sql = "SELECT account_id, accounts.amount, accounts.account_type, primary_account FROM account_access " + 
+					     "LEFT JOIN accounts on account_access.account_id = accounts.id WHERE personal_account_id = ?";
 			PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setInt(1, id);
 				
@@ -143,6 +143,7 @@ public class UserDao {
 			}
 			
 			return accounts;
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -151,16 +152,69 @@ public class UserDao {
 	
 	public boolean makeTransfer(int idIn, int idOut, BigDecimal amount) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
-			String sql = "select transfer_wealth( ?::Money, ?, ?)";
+			String sql = "SELECT transfer_wealth( ?::Money, ?, ?)";
 			PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setBigDecimal(1, amount);
 				statement.setInt(2, idIn);
 				statement.setInt(3, idOut);
 				
-			return statement.execute();
+			System.out.println(statement.toString());
+			
+			ResultSet resultSet = statement.executeQuery();
+			return resultSet.next();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+	
+	public void makeUpdate(int accountId, BigDecimal amount, String operator) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "";
+			if (operator.equals("+")) {
+				sql = "UPDATE accounts SET (amount) = (amount + ?::money) WHERE id = ?";
+			} else if (operator.equals("-")){
+				sql = "UPDATE accounts SET (amount) = (amount - ?::money) WHERE id = ?";
+
+			}
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setBigDecimal(1, amount);
+				statement.setInt(2, accountId);
+			
+			int change = statement.executeUpdate();
+			
+			if (change > 1) {
+				System.out.println("something bad happened.... " + change + "changes");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public BigDecimal distributeWealth(BigDecimal amount, int accountID, int userID) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "SELECT distribute_wealth(?::money, ?, ?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setBigDecimal(1, amount);
+				statement.setInt(2, accountID);
+				statement.setInt(3, userID);
+				
+			ResultSet resultSet = statement.executeQuery();
+			BigDecimal increase = new BigDecimal(0);
+			
+			while(resultSet.next()) {
+				String increaseString = resultSet.getString(1);
+				increaseString = increaseString.substring(1).replace(",", "");
+				BigDecimal a = new BigDecimal(increaseString);
+				
+				increase = a;
+			}
+			
+			return increase;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	

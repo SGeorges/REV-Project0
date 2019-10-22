@@ -21,21 +21,26 @@ public class UserMenu implements View{
 
 	public void printMenu() {
 		System.out.println();
-		System.out.println("---------- Personal Account Menu ----------");
-		System.out.println("1. View Account Details");
-		System.out.println("2. View Banking Accounts");
-		System.out.println("3. Change Full Name");
-		System.out.println("4. Change Password");
-		System.out.println("0. Exit");
+		System.out.println("------------------------------------------------");
+		System.out.println("|             Personal Account Menu            |");
+		System.out.println("|----------------------------------------------|");
+		System.out.println("| 1. View Account Details                      |");
+		System.out.println("| 2. View Banking Accounts                     |");
+		System.out.println("| 3. Change Full Name                          |");
+		System.out.println("| 4. Change Password                           |");
+		System.out.println("| 0. Exit                                      |");
+		System.out.println("------------------------------------------------");
 	}
 	
 	public void printAccDetails() {
 		System.out.println();
-		System.out.println("---------- Personal Account Details ----------");
-		System.out.println("Account ID        : " + user.getId());
-		System.out.println("Account Full Name : " + user.getFullName());
-		System.out.println("Account Start Date: " + user.getStartDate());
-		System.out.println("----------------------------------------------");
+		System.out.println("------------------------------------------------");
+		System.out.println("|           Personal Account Details           |");
+		System.out.println("|----------------------------------------------|");
+		System.out.printf("| Account ID        : %24d |%n", user.getId());
+		System.out.printf("| Account Full Name : %24s |%n", user.getFullName());
+		System.out.printf("| Account Start Date: %24s |%n", user.getStartDate());
+		System.out.println("------------------------------------------------");
 	}
 
 	@Override
@@ -67,13 +72,14 @@ public class UserMenu implements View{
 	private void viewBankAccounts() {
 		List<Account> accounts = userDao.getBankAccounts(user.getId());
 		
-		System.out.println("-----------------------------------------------");
-		System.out.println("| Account ID | Account Type | Primary Account |");
+		System.out.println("------------------------------------------------");
+		System.out.println("| Account ID | Account Type | Primary Account  |");
+		System.out.println("|----------------------------------------------|");
 		for (Account account : accounts) {
-			System.out.printf("| %10d | %-12s | %-15B |%n", 
+			System.out.printf("| %10d | %-12s | %-16B |%n", 
 							  account.getId(), account.getAccountType(), account.isPrimaryAccount());
 		}
-		System.out.println("-----------------------------------------------");
+		System.out.println("------------------------------------------------");
 		System.out.println("Select which account you'd like to access.");
 		
 		int accSelect = ScannerUtil.getInput((accounts.size() - 1));
