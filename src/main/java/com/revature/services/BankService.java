@@ -25,7 +25,8 @@ public class BankService {
 		BigDecimal increase = userDao.distributeWealth(amount, account.getId(), userID);
 		account.setAmount(account.getAmount().add(increase));
 	
-		System.out.printf("Your deposit of %s rubles has been made distributed to the people.%n" , amount);
+		System.out.printf("Your deposit of %s rubles has been distributed to the people.%n" , amount);
+		System.out.println("Long live the motherland!");
 
 		return account;
 	}

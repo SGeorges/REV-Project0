@@ -26,7 +26,7 @@ public class UserMenu implements View{
 		System.out.println("|----------------------------------------------|");
 		System.out.println("| 1. View Account Details                      |");
 		System.out.println("| 2. View Banking Accounts                     |");
-		System.out.println("| 3. Change Full Name                          |");
+		System.out.println("| 3. Create Account                            |");
 		System.out.println("| 4. Change Password                           |");
 		System.out.println("| 0. Exit                                      |");
 		System.out.println("------------------------------------------------");
@@ -59,8 +59,8 @@ public class UserMenu implements View{
 			viewBankAccounts();
 			return new AccountMenu(this.user, this.account);
 		case 3: 
-			// Do something method()
-			return new UserMenu(this.user);
+			createAccount();
+			return new AccountMenu(this.user, this.account);
 		case 4: 
 			// Do something method()
 			return new UserMenu(this.user);
@@ -85,6 +85,25 @@ public class UserMenu implements View{
 		int accSelect = ScannerUtil.getInput((accounts.size() - 1));
 		
 		this.account = accounts.get((accSelect));
+	}
+	
+	private void createAccount() {
+		System.out.println();
+		System.out.println("------------------------------------------------");
+		System.out.println("Please Enter the type of account you'd like to make : ");
+		System.out.println("0. Savings");
+		System.out.println("1. Checking");
+		System.out.println("------------------------------------------------");
+		int accTypeSelect = ScannerUtil.getInput(1);
+		String accType = new String();
+		
+		if (accTypeSelect == 0) {
+			accType = "Savings";
+		} else {
+			accType = "Checking";
+		}
+		
+		this.account = userDao.createAccount(user.getId(), accType);
 	}
 
 }

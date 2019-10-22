@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.revature.models.Account;
+import com.revature.models.Holder;
 import com.revature.models.User;
 import com.revature.util.ConnectionUtil;
 
@@ -102,6 +103,15 @@ public class UserDao {
 		Account account = new Account(accountId, amount, accountType, primaryAccount);
 		return account;
 	}
+	
+	private Holder extractHolder(ResultSet resultSet) throws SQLException {
+		int personID = resultSet.getInt("id");
+		String fullName = resultSet.getString("full_name");
+		boolean primaryAccount = resultSet.getBoolean("primary_account");
+		
+		Holder holder = new Holder(personID, fullName, primaryAccount);
+		return holder;
+	}
 
 	// Takes user input for id and password then pulls information from Personal_account into the resultSet
 	// ResultSet then pushed to extractUser to populate a user model to be returned. 
@@ -150,6 +160,31 @@ public class UserDao {
 		}
 	}
 	
+	public List<Holder> viewAccountHolders(int accountID) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "SELECT id, full_name, account_access.primary_account FROM personal_accounts " +
+						 "LEFT JOIN account_access ON account_access.personal_account_id = personal_accounts.id " +
+						 "WHERE (account_access.account_id = ?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, accountID);
+				
+//			System.out.println(sql);
+			ResultSet resultSet = statement.executeQuery();
+			List<Holder> holders = new ArrayList<>();
+			
+			while(resultSet.next()) {
+				Holder holder = extractHolder(resultSet);
+				holders.add(holder);
+			}
+			
+			return holders;
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public boolean makeTransfer(int idIn, int idOut, BigDecimal amount) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
 			String sql = "SELECT transfer_wealth( ?::Money, ?, ?)";
@@ -158,7 +193,7 @@ public class UserDao {
 				statement.setInt(2, idIn);
 				statement.setInt(3, idOut);
 				
-			System.out.println(statement.toString());
+//			System.out.println(statement.toString());
 			
 			ResultSet resultSet = statement.executeQuery();
 			return resultSet.next();
@@ -194,12 +229,14 @@ public class UserDao {
 	
 	public BigDecimal distributeWealth(BigDecimal amount, int accountID, int userID) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
+			connection.setAutoCommit(false);
+			
 			String sql = "SELECT distribute_wealth(?::money, ?, ?)";
 			PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setBigDecimal(1, amount);
 				statement.setInt(2, accountID);
 				statement.setInt(3, userID);
-				
+			
 			ResultSet resultSet = statement.executeQuery();
 			BigDecimal increase = new BigDecimal(0);
 			
@@ -211,11 +248,76 @@ public class UserDao {
 				increase = a;
 			}
 			
+			connection.commit();
 			return increase;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
+	
+	public Account createAccount(int perID, String accType) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "SELECT create_account(?, ?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, perID);
+				statement.setString(2, accType);
+				
+			ResultSet resultSet = statement.executeQuery();
+			Account account = new Account();
+			
+			while(resultSet.next()) {
+				account = getAccount(connection, resultSet.getInt(1));
+			}
+			
+			return account;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private Account getAccount(Connection connection, int accountID) throws SQLException {
+		String sql = "SELECT account_id, accounts.amount, accounts.account_type, primary_account FROM account_access " + 
+			     	 "LEFT JOIN accounts on account_access.account_id = accounts.id WHERE (account_id = ?)";
+		PreparedStatement statement = connection.prepareStatement(sql);
+			statement.setInt(1, accountID);
+			
+		ResultSet resultSet = statement.executeQuery();
+		Account newAccount = new Account();
+		
+		while(resultSet.next()) {
+			newAccount = extractAccount(resultSet);
+		}
+		return newAccount;
+	}
+
+	public void revokePrimaryHolder(int accountID, int holderID) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "UPDATE account_access SET primary_account = 'false' WHERE (account_id = ?) AND (personal_account_id = ?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, accountID);
+				statement.setInt(2, holderID);
+				
+			int update = statement.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void addAccountHolder(int accountId, int holderID) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "SELECT add_holder(?, ?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, holderID);
+				statement.setInt(2, accountId);
+				
+			ResultSet resultSet = statement.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}	
 	
 }
