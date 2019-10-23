@@ -13,7 +13,7 @@ import com.revature.util.ScannerUtil;
 
 public class AccountMenu implements View {
 	private UserDao userDao = new UserDao();
-	private BankService bs = new BankService();
+	private BankService bs = new BankService(userDao);
 	
 	private User user = new User();
 	private Account account = new Account();

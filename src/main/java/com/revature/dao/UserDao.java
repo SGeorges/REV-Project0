@@ -205,7 +205,7 @@ public class UserDao {
 		}
 	}
 	
-	public void makeUpdate(int accountId, BigDecimal amount, String operator) {
+	public Account makeUpdate(int accountId, BigDecimal amount, String operator) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
 			connection.setAutoCommit(false);
 			String sql = "";
@@ -221,8 +221,11 @@ public class UserDao {
 			
 			statement.executeUpdate();
 			connection.commit();
+			
+			return new Account();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -291,6 +294,26 @@ public class UserDao {
 		return newAccount;
 	}
 	
+	public Account getAccount(int accountID)  {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "SELECT account_id, accounts.amount, accounts.account_type, primary_account FROM account_access " + 
+				     	 "LEFT JOIN accounts on account_access.account_id = accounts.id WHERE (account_id = ?)";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, accountID);
+				
+			ResultSet resultSet = statement.executeQuery();
+			Account newAccount = new Account();
+			
+			while(resultSet.next()) {
+				newAccount = extractAccount(resultSet);
+			}
+			return newAccount;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public void closeAccount(int accountID) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
 			String sql = "DELETE FROM account_access WHERE account_access.account_id = ?";
@@ -310,7 +333,7 @@ public class UserDao {
 				statement.setInt(1, accountID);
 				statement.setInt(2, holderID);
 				
-			int update = statement.executeUpdate();
+			statement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -324,7 +347,7 @@ public class UserDao {
 				statement.setInt(1, holderID);
 				statement.setInt(2, accountId);
 				
-			ResultSet resultSet = statement.executeQuery();
+			statement.executeQuery();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

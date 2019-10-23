@@ -6,15 +6,20 @@ import com.revature.dao.UserDao;
 import com.revature.models.Account;
 
 public class BankService {
-	private UserDao userDao = new UserDao();
+	static  UserDao userDao = new UserDao();
 	
-	public Account makeTransfer(int accountIn, Account accountOut, BigDecimal amount) {
-		if ( accountIn == accountOut.getId() ) {
+	public BankService(UserDao userDao) {
+		super();
+		this.userDao = userDao;
+	}
+	
+	public Account makeTransfer(int accountIDIn, Account accountOut, BigDecimal amount) {
+		if ( accountIDIn == accountOut.getId() ) {
 			System.out.println("You've requested to transfer money to the same account. Please review your input.");
 			return accountOut;
 		} else {
-			if (userDao.makeTransfer(accountIn, accountOut.getId(), amount)) {
-				System.out.printf("Your transaction of %s rubles has been successfully sent to %d.%n", amount, accountIn);
+			if (userDao.makeTransfer(accountIDIn, accountOut.getId(), amount)) {
+				System.out.printf("Your transaction of %s rubles has been successfully sent to %d.%n", amount, accountIDIn);
 				accountOut.setAmount(accountOut.getAmount().subtract(amount));
 			}
 			else {
