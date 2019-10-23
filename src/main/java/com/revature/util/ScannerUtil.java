@@ -63,4 +63,19 @@ public class ScannerUtil {
 		
 		return input;
 	}
+	
+	public static double getDInput() {
+		double input = -1;
+		
+		while (input < 0) {
+			if (!scanner.hasNextDouble()) {
+				scanner.nextLine();
+				continue;
+			}
+			input = scanner.nextDouble();
+		}
+		
+		scanner.nextLine();
+		return input;
+	}
 }

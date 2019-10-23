@@ -69,7 +69,7 @@ public class AccountMenu implements View {
 		System.out.println();
 		System.out.println("------------------------------------------------");
 		System.out.println("Please insert the amount you would like to deposit: ");
-		double amountInput = ScannerUtil.getIntInput();
+		double amountInput = ScannerUtil.getDInput();
 		System.out.println("------------------------------------------------");
 		this.account = bs.makeDeposit(this.account, BigDecimal.valueOf(amountInput), this.user.getId());
 		System.out.println("------------------------------------------------");
@@ -79,7 +79,7 @@ public class AccountMenu implements View {
 		System.out.println();
 		System.out.println("------------------------------------------------");
 		System.out.println("Please insert the amount you would like to deposit: ");
-		double amountInput = ScannerUtil.getIntInput();
+		double amountInput = ScannerUtil.getDInput();
 		System.out.println("------------------------------------------------");
 		this.account = bs.makeDeposit(this.account, BigDecimal.valueOf(amountInput));
 		System.out.println("------------------------------------------------");

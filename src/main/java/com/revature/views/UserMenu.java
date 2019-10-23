@@ -27,7 +27,6 @@ public class UserMenu implements View{
 		System.out.println("| 1. View Account Details                      |");
 		System.out.println("| 2. View Banking Accounts                     |");
 		System.out.println("| 3. Create Account                            |");
-		System.out.println("| 4. Change Password                           |");
 		System.out.println("| 0. Exit                                      |");
 		System.out.println("------------------------------------------------");
 	}
