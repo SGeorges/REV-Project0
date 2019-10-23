@@ -144,6 +144,22 @@ public class AccountMenu implements View {
 		}
 	}
 	
+	private boolean closeAccount() {
+		System.out.println("Would you like to close this account?");
+		System.out.println("0. YES");
+		System.out.println("1. NO");
+		
+		int userChoice = ScannerUtil.getInput(1);
+		
+		if ( userChoice == 0 ) {
+			userDao.closeAccount(this.account.getId());
+			System.out.printf("All access to the account %d has been removed", this.account.getId());
+			return true;
+		}else {
+			return true;
+		}
+	}
+	
 	@Override
 	public View run() {
 		printMenu();
@@ -192,7 +208,11 @@ public class AccountMenu implements View {
 			revokePrimaryHolder();
 			return new AccountMenu(this.user,this.account);
 		case 8: 
-			return null;
+			if (closeAccount()) {
+				return new UserMenu(this.user);
+			} else {
+				return new AccountMenu(this.user,this.account);
+			}
 		case 9:
 			if (this.user.isPrivileged()) {
 				directDepositMenu();

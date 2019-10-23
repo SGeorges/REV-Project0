@@ -152,8 +152,7 @@ public class UserDao {
 				accounts.add(account);
 			}
 			
-			return accounts;
-			
+			return accounts;	
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return null;
@@ -187,15 +186,17 @@ public class UserDao {
 	
 	public boolean makeTransfer(int idIn, int idOut, BigDecimal amount) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
+			connection.setAutoCommit(false);
 			String sql = "SELECT transfer_wealth( ?::Money, ?, ?)";
 			PreparedStatement statement = connection.prepareStatement(sql);
 				statement.setBigDecimal(1, amount);
 				statement.setInt(2, idIn);
 				statement.setInt(3, idOut);
 				
-//			System.out.println(statement.toString());
+			
 			
 			ResultSet resultSet = statement.executeQuery();
+			connection.commit();
 			return resultSet.next();
 			
 		} catch (SQLException e) {
@@ -206,6 +207,7 @@ public class UserDao {
 	
 	public void makeUpdate(int accountId, BigDecimal amount, String operator) {
 		try (Connection connection = ConnectionUtil.getConnection()) {
+			connection.setAutoCommit(false);
 			String sql = "";
 			if (operator.equals("+")) {
 				sql = "UPDATE accounts SET (amount) = (amount + ?::money) WHERE id = ?";
@@ -217,11 +219,8 @@ public class UserDao {
 				statement.setBigDecimal(1, amount);
 				statement.setInt(2, accountId);
 			
-			int change = statement.executeUpdate();
-			
-			if (change > 1) {
-				System.out.println("something bad happened.... " + change + "changes");
-			}
+			statement.executeUpdate();
+			connection.commit();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -290,6 +289,18 @@ public class UserDao {
 			newAccount = extractAccount(resultSet);
 		}
 		return newAccount;
+	}
+	
+	public void closeAccount(int accountID) {
+		try (Connection connection = ConnectionUtil.getConnection()) {
+			String sql = "DELETE FROM account_access WHERE account_access.account_id = ?";
+			PreparedStatement statement = connection.prepareStatement(sql);
+				statement.setInt(1, accountID);
+				
+			statement.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void revokePrimaryHolder(int accountID, int holderID) {

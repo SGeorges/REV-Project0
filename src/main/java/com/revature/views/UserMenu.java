@@ -47,7 +47,7 @@ public class UserMenu implements View{
 	public View run() {
 		printMenu();
 		
-		int user_input = ScannerUtil.getInput(4);
+		int user_input = ScannerUtil.getInput(3);
 
 		switch(user_input) {
 		case 0: 
@@ -61,9 +61,6 @@ public class UserMenu implements View{
 		case 3: 
 			createAccount();
 			return new AccountMenu(this.user, this.account);
-		case 4: 
-			// Do something method()
-			return new UserMenu(this.user);
 		default: 
 			return null;
 		}	
